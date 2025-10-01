@@ -1,5 +1,5 @@
 import express from "express";
-import router from "./routers/shortener.routes"
+import router from "./routers/shortener.routes.js"
 
 const app = express();
 

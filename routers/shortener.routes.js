@@ -4,7 +4,7 @@ import crypto from "crypto";
 import path from "path";
 import {Router} from  "express";
 
-const router  = Router;
+const router  = Router();
 
 import {json} from "stream/consumers";
 
