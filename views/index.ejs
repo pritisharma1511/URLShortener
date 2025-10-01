@@ -33,18 +33,21 @@
       .join("") -->
 
 
-      <% Object.entries(links).map(([shortCode,url]) => {
-        <li>
-            <a href ="/<%= shortCode %>" target ="_blank">
-              <%= host %> /<%= shortCode %>  
-            </a>- <%= url %>
-        </li>
+      <ul>
+  <% Object.entries(links).forEach(([shortCode, url]) => { %>
+    <li>
+      <a href="/<%= shortCode %>" target="_blank">
+        <%= host %>/<%= shortCode %>
+      </a> - <%= url.length > 50 ? url.slice(0, 50) + "..." : url %>
+    </li>
+  <% }) %>
+</ul>
 
-     <% })%>
 
 
 
-        </ul>
+
+        
         </div>
 
         <script>
