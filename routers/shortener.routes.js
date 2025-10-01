@@ -59,7 +59,7 @@ router.get("/",async(req,res) => {
 }
 });
 
-router.post("/",postURLShortener);
+router.post("/",postURLShortener(loadLinks,saveLinks));
 
 
 

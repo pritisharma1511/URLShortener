@@ -1,5 +1,5 @@
 import crypto from "crypto";
- export const postURLShortener= async(req,res) =>{
+ export const postURLShortener = (loadLinks,saveLinks)=> async(req,res) =>{
   try {
     const {url, shortCode} = req.body;
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
