@@ -3,30 +3,32 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 import {Router} from  "express";
-import {postURLShortener} from "../controllers/postshortener.js";
+import {postURLShortener,getShortenerPage} from "../controllers/postshortener.js";
 
 
 const router  = Router();
 
 import {json} from "stream/consumers";
 
-const DATA_FILE = path.join("data","links.json");
-const loadLinks = async () => {
-  try{
-    const data = await readFile(DATA_FILE,"utf-8");
-    return JSON.parse(data);
-  }
-  catch(error){
-    if(error.code === "ENOENT"){
-      await writeFile(DATA_FILE,JSON.stringify({}));
-      return{};
-    }
-    throw error;
-  }
-}
-const saveLinks = async (links) => {
-  await writeFile(DATA_FILE, JSON.stringify(links));
-}
+// const DATA_FILE = path.join("data","links.json");
+// const loadLinks = async () => {
+//   try{
+//     const data = await readFile(DATA_FILE,"utf-8");
+//     return JSON.parse(data);
+//   }
+//   catch(error){
+//     if(error.code === "ENOENT"){
+//       await writeFile(DATA_FILE,JSON.stringify({}));
+//       return{};
+//     }
+//     throw error;
+//   }
+// }
+// const saveLinks = async (links) => {
+//   await writeFile(DATA_FILE, JSON.stringify(links));
+// }
+
+router.get("/",getShortenerPage);
 
 router.get("/report",(req,res) => {
   res.render("report");
@@ -36,30 +38,30 @@ router.get("/report",(req,res) => {
 
 
 
-router.get("/",async(req,res) => {
-  try{
-    const file = await readFile(path.join("views","index.html"));
-    const links = await loadLinks();
+// router.get("/",async(req,res) => {
+//   try{
+//     const file = await readFile(path.join("views","index.html"));
+//     const links = await loadLinks();
     
-    const content = file.toString().replaceAll("{{shortened_urls}}",
-      Object.entries(links)
-      .map(
-        ([shortCode,url]) =>
-          `<li><a href="/${shortCode}" target= "_blank">${req.host}
-        /${shortCode} </a> - ${url}</li>`
-      )
-      .join("")
-    );
-  return res.send(content)
+//     const content = file.toString().replaceAll("{{shortened_urls}}",
+//       Object.entries(links)
+//       .map(
+//         ([shortCode,url]) =>
+//           `<li><a href="/${shortCode}" target= "_blank">${req.host}
+//         /${shortCode} </a> - ${url}</li>`
+//       )
+//       .join("")
+//     );
+//   return res.send(content)
 
 
-}catch (error){
-  console.log(error);
-  return res.status(500).send("Internal server error");
-}
-});
+// }catch (error){
+//   console.log(error);
+//   return res.status(500).send("Internal server error");
+// }
+// });
 
-router.post("/",postURLShortener(loadLinks,saveLinks));
+router.post("/",postURLShortener);
 
 
 
