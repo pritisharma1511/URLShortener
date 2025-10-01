@@ -3,6 +3,7 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 import {Router} from  "express";
+import {postURLShortener} from "/controllers/postshortener.js"
 
 const router  = Router();
 
@@ -57,23 +58,9 @@ router.get("/",async(req,res) => {
 }
 });
 
-router.post ("/",async(req,res) => {
-  try {
-    const {url, shortCode} = req.body;
-    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
-    const links = await loadLinks();
-  
-    if(links[finalShortCode]){
-        return res
-        .status(400)
-        .send("short code already exists");     
-             }
-              links[finalShortCode] = url;
-             await saveLinks(links);
+router.post("/",postURLShortener);
 
-       }
-      catch (error){}
-    }); 
+
 
     router.get("/:shortCode",async (req,res) => {
       try{
