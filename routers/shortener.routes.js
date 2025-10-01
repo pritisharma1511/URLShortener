@@ -2,6 +2,9 @@ import {readFile,writeFile} from "fs/promises";
 import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
+import {Router} from  "express";
+
+const router  = Router;
 
 import {json} from "stream/consumers";
 
@@ -23,7 +26,7 @@ const saveLinks = async (links) => {
   await writeFile(DATA_FILE, JSON.stringify(links));
 }
 
-app.get("/",async(req,res) => {
+router.get("/",async(req,res) => {
   try{
     const file = await readFile(path.join("views","index.html"));
     const links = await loadLinks();
@@ -46,7 +49,7 @@ app.get("/",async(req,res) => {
 }
 });
 
-app.post ("/",async(req,res) => {
+router.post ("/",async(req,res) => {
   try {
     const {url, shortCode} = req.body;
     const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
@@ -64,7 +67,7 @@ app.post ("/",async(req,res) => {
       catch (error){}
     }); 
 
-    app.get("/:shortCode",async (req,res) => {
+    router.get("/:shortCode",async (req,res) => {
       try{
         const {shortCode} = req.params;
         const links = await loadLinks();
