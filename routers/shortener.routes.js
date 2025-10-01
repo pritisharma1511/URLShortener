@@ -16,7 +16,7 @@ const loadLinks = async () => {
   }
   catch(error){
     if(error.code === "ENOENT"){
-      await writeFile(url,JSON.stringify({}));
+      await writeFile(DATA_FILE,JSON.stringify({}));
       return{};
     }
     throw error;
@@ -81,8 +81,9 @@ router.post ("/",async(req,res) => {
       }
     });
 
-    export default router;
+    // export default router;
 
+   export const shortenedRoutes =  router;
 
 
 
