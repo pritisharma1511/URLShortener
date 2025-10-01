@@ -3,6 +3,8 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 
+import {json} from "stream/consumers";
+
 const DATA_FILE = path.join("data","links.json");
 const loadLinks = async () => {
   try{
