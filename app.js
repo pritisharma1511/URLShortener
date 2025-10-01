@@ -45,11 +45,33 @@ app.get("/",async(req,res) => {
   try{
     const file = await fs.readFile(path.join("views","index.html"));
     const links = await loadLinks();
+    
+    const content = file.toString().replaceAll("{{shortened_urls}}",)
 }catch (error){
   console.log(err);
   return res.status(500).send("Internal server error");
 }
 });
+
+app.post ("/",async(req,res) => {
+  try {
+    const {url, shortCode} = req.body;
+    const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
+    const links = await loadLinks();
+  
+    if(links[finalShortCode]){
+        return res
+        .status(400)
+        .send("short code already exists");     
+             }
+              links[finalShortCode] = url;
+             await saveLinks(links);
+
+       }
+      catch (error){
+
+      }
+    } ) ; 
 
 
 
