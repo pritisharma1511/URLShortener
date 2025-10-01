@@ -41,10 +41,14 @@ const saveLinks = async (links) => {
   await writeFile(DATA_FILE, JSON.stringify(links));
 }
 
-app.get("/",(req,res) => {
+app.get("/",async(req,res) => {
   try{
-}catch{
-  }
+    const file = await fs.readFile(path.join("views","index.html"));
+    const links = await loadLinks();
+}catch (error){
+  console.log(err);
+  return res.status(500).send("Internal server error");
+}
 });
 
 
