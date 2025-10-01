@@ -12,6 +12,7 @@ const PORT = 3002;
 const DATA_FILE = path.join("data","links.json");
 
 app.use(express.static("public"));
+app.use(express.urlencoded({extened:true}))
 
 const serverFile = async (res,filePath,contentType) => {
   try{
@@ -23,7 +24,6 @@ const serverFile = async (res,filePath,contentType) => {
         res.end("404 page not found")
       }
 };
-
 const loadLinks = async () => {
   try{
     const data = await readFile(DATA_FILE,"utf-8");
@@ -95,6 +95,8 @@ app.post ("/",async(req,res) => {
         return res.status(500).send("internal server error");
       }
     });
+
+
 
 
 
