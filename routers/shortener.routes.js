@@ -3,7 +3,8 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 import {Router} from  "express";
-import {postURLShortener} from "/controllers/postshortener.js"
+import {postURLShortener} from "../controllers/postshortener.js";
+
 
 const router  = Router();
 
