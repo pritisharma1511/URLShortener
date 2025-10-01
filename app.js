@@ -32,8 +32,8 @@ const loadLinks = async () => {
     throw error;
   }
 }
-const saveLinks = async () =>{
-   await writeFile(DATA_FILE,JSON.stringify(links));
+const saveLinks = async (links) => {
+  await writeFile(DATA_FILE, JSON.stringify(links));
 }
 
 const server = createServer(async ( req,res) => {
@@ -53,14 +53,15 @@ const server = createServer(async ( req,res) => {
           const links = await loadLinks();
           const shortCode = req.url.slice(1);
           console.log("links red." , req.url);
-          if(links[shortCode]){
-            res.writeHead(302,{location : links[shortCode]});
-            return res.end();
-          }
-          res.writeHead(404,{location : links[shortCode]});
-            return res.end();
+          if (links[shortCode]) {
+  res.writeHead(302, { Location: links[shortCode] });
+  return res.end();
+} else {
+  res.writeHead(404, { "Content-Type": "text/plain" });
+  return res.end("404: Short URL not found");
+}
         }
-        }
+       }
         if(req.method === "POST" && req.url === "/shorten") {
 
           const links = await loadLinks();
