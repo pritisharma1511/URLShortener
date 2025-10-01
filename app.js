@@ -1,9 +1,9 @@
-import {readFile} from "fs/promises";
+import {readFile,writeFile} from "fs/promises";
 import { createServer } from "http";
 import path from "path";
 import crypto from "crypto";
 import {json} from "stream/consumers";
-import { writeFile } from "fs";
+
 import express from "express";
 
 const app = express();
@@ -43,12 +43,23 @@ const saveLinks = async (links) => {
 
 app.get("/",async(req,res) => {
   try{
-    const file = await fs.readFile(path.join("views","index.html"));
+    const file = await readFile(path.join("views","index.html"));
     const links = await loadLinks();
     
-    const content = file.toString().replaceAll("{{shortened_urls}}",)
+    const content = file.toString().replaceAll("{{shortened_urls}}",
+      Object.entries(links)
+      .map(
+        ([shortCode,url]) =>
+          `<li><a href="/${shortCode}" target= "_blank">${req.host}
+        /${shortCode} </a> - ${url}</li>`
+      )
+      .join("")
+    );
+  return res.send(content)
+
+
 }catch (error){
-  console.log(err);
+  console.log(error);
   return res.status(500).send("Internal server error");
 }
 });
@@ -68,67 +79,82 @@ app.post ("/",async(req,res) => {
              await saveLinks(links);
 
        }
-      catch (error){
+      catch (error){}
+    }); 
 
+    app.get("/:shortCode",async (req,res) => {
+      try{
+        const {shortCode} = req.params;
+        const links = await loadLinks();
+
+        if(!links[shortCode]) return res.setMaxListeners(404).send("404 error occured");
+
+        return res.redirect(links[shortCode]);
+      } catch (err){
+        console.error(err);
+        return res.status(500).send("internal server error");
       }
-    } ) ; 
+    });
 
 
 
-const server = createServer(async ( req,res) => {
-   console.log(req.url);
-    if(req.method ==="GET") {
-        if (req.url === "/"){
-            return serverFile(res, path.join("public","index.html"),"text/html");
-        }else if(req.url === "/style.css"){
-          return serverFile(res, path.join("public","style.css"),"text/css");
-        }else if(req.url ==="/links"){
-           const links = await loadLinks();
 
-           res.writeHead(200,{"Content-Type":"application/json"});
-           return res.end(JSON.stringify(links));
-        }
-        else{
-          const links = await loadLinks();
-          const shortCode = req.url.slice(1);
-          console.log("links red." , req.url);
-          if (links[shortCode]) {
-  res.writeHead(302, { Location: links[shortCode] });
-  return res.end();
-} else {
-  res.writeHead(404, { "Content-Type": "text/plain" });
-  return res.end("404: Short URL not found");
-}
-        }
-       }
-        if(req.method === "POST" && req.url === "/shorten") {
 
-          const links = await loadLinks();
-          let body = "";
-          req.on("data",(chunk) => (body += chunk) );
-          req.on("end",async () => {
-             console.log(body);
-             const {url, shortCode} = JSON.parse(body);
 
-             if(!url){
-              res.writeHead(400,{"Content-Type":"text/plain"});
-              return res.end("url is required")
-             }
-             const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
+// const server = createServer(async ( req,res) => {
+//    console.log(req.url);
+//     if(req.method ==="GET") {
+//         if (req.url === "/"){
+//             return serverFile(res, path.join("public","index.html"),"text/html");
+//         }else if(req.url === "/style.css"){
+//           return serverFile(res, path.join("public","style.css"),"text/css");
+//         }else if(req.url ==="/links"){
+//            const links = await loadLinks();
 
-             if(links[finalShortCode]){
-               res.writeHead(400,{"Content-Type":"text/plain"});
-              return res.end("short codfe already exists");
-             }
-             links[finalShortCode] = url;
-             await saveLinks(links);
+//            res.writeHead(200,{"Content-Type":"application/json"});
+//            return res.end(JSON.stringify(links));
+//         }
+//         else{
+//           const links = await loadLinks();
+//           const shortCode = req.url.slice(1);
+//           console.log("links red." , req.url);
+//           if (links[shortCode]) {
+//   res.writeHead(302, { Location: links[shortCode] });
+//   return res.end();
+// } else {
+//   res.writeHead(404, { "Content-Type": "text/plain" });
+//   return res.end("404: Short URL not found");
+// }
+//         }
+//        }
+//         if(req.method === "POST" && req.url === "/shorten") {
 
-             res.writeHead(200,{"Content-type":"application/json"});
-             res.end(JSON.stringify({ success:true , shortCode : finalShortCode}));
-          });
-        }
-       });
-server.listen(PORT, () => {
+//           const links = await loadLinks();
+//           let body = "";
+//           req.on("data",(chunk) => (body += chunk) );
+//           req.on("end",async () => {
+//              console.log(body);
+//              const {url, shortCode} = JSON.parse(body);
+
+//              if(!url){
+//               res.writeHead(400,{"Content-Type":"text/plain"});
+//               return res.end("url is required")
+//              }
+//              const finalShortCode = shortCode || crypto.randomBytes(4).toString("hex");
+
+//              if(links[finalShortCode]){
+//                res.writeHead(400,{"Content-Type":"text/plain"});
+//               return res.end("short codfe already exists");
+//              }
+//              links[finalShortCode] = url;
+//              await saveLinks(links);
+
+//              res.writeHead(200,{"Content-type":"application/json"});
+//              res.end(JSON.stringify({ success:true , shortCode : finalShortCode}));
+//           });
+//         }
+//        });
+app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}
   `);
 });
