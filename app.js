@@ -1,4 +1,5 @@
 import express from "express";
+import router from "./routers/shortener.routes"
 
 const app = express();
 
@@ -7,6 +8,8 @@ const PORT = 3002;
 
 app.use(express.static("public"));
 app.use(express.urlencoded({extened:true}))
+
+app.use(router);
 
 // const serverFile = async (res,filePath,contentType) => {
 //   try{
