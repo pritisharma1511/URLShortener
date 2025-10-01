@@ -3,7 +3,7 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 import {Router} from  "express";
-import {postURLShortener,getShortenerPage} from "../controllers/postshortener.js";
+import {postURLShortener,getShortenerPage,getURLShortener} from "../controllers/postshortener.js";
 
 
 const router  = Router();
@@ -29,6 +29,8 @@ import {json} from "stream/consumers";
 // }
 
 router.get("/",getShortenerPage);
+
+router.get("/:shortCode",getURLShortener);
 
 router.get("/report",(req,res) => {
   res.render("report");
@@ -65,19 +67,19 @@ router.post("/",postURLShortener);
 
 
 
-    router.get("/:shortCode",async (req,res) => {
-      try{
-        const {shortCode} = req.params;
-        const links = await loadLinks();
+    // router.get("/:shortCode",async (req,res) => {
+    //   try{
+    //     const {shortCode} = req.params;
+    //     const links = await loadLinks();
 
-        if(!links[shortCode]) return res.setMaxListeners(404).send("404 error occured");
+    //     if(!links[shortCode]) return res.setMaxListeners(404).send("404 error occured");
 
-        return res.redirect(links[shortCode]);
-      } catch (err){
-        console.error(err);
-        return res.status(500).send("internal server error");
-      }
-    });
+    //     return res.redirect(links[shortCode]);
+    //   } catch (err){
+    //     console.error(err);
+    //     return res.status(500).send("internal server error");
+    //   }
+    // });
 
     // export default router;
 

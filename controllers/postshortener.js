@@ -1,21 +1,12 @@
 import crypto from "crypto";
-// import {loadlinks ,saveLinks} from "/models/shortener.model.js"
+import { loadLinks,saveLinks } from "../models/shortener.model.js";
 
 export const getShortenerPage = async(req,res) => {
   try{
-    const file = await readFile(path.join("views","index.html"));
+    // const file = await readFile(path.join("views","index.html"));
     const links = await loadLinks();
-    
-    const content = file.toString().replaceAll("{{shortened_urls}}",
-      Object.entries(links)
-      .map(
-        ([shortCode,url]) =>
-          `<li><a href="/${shortCode}" target= "_blank">${req.host}
-        /${shortCode} </a> - ${url}</li>`
-      )
-      .join("")
-    );
-  return res.send(content)
+     
+    return res.render ("index" ,{links,host:req.host})
 
 
 }catch (error){
@@ -40,4 +31,17 @@ export const getShortenerPage = async(req,res) => {
        }
       catch (error){}
     }; 
+   export const getURLShortener = async (req,res) => {
+      try{
+        const {shortCode} = req.params;
+        const links = await loadLinks();
+
+        if(!links[shortCode]) return res.setMaxListeners(404).send("404 error occured");
+
+        return res.redirect(links[shortCode]);
+      } catch (err){
+        console.error(err);
+        return res.status(500).send("internal server error");
+      }
+    };
 

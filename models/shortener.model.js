@@ -3,8 +3,9 @@ import { createServer } from "http";
 import crypto from "crypto";
 import path from "path";
 
- export const DATA_FILE = path.join("data","links.json");
-const loadLinks = async () => {
+
+ const DATA_FILE = path.join("data","links.json");
+ export const loadLinks = async () => {
   try{
     const data = await readFile(DATA_FILE,"utf-8");
     return JSON.parse(data);
@@ -17,6 +18,6 @@ const loadLinks = async () => {
     throw error;
   }
 }
-const saveLinks = async (links) => {
+ export const saveLinks = async (links) => {
   await writeFile(DATA_FILE, JSON.stringify(links));
 }
