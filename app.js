@@ -4,9 +4,14 @@ import path from "path";
 import crypto from "crypto";
 import {json} from "stream/consumers";
 import { writeFile } from "fs";
+import express from "express";
+
+const app = express();
 
 const PORT = 3002;
 const DATA_FILE = path.join("data","links.json");
+
+app.use(express.static("public"));
 
 const serverFile = async (res,filePath,contentType) => {
   try{
@@ -35,6 +40,14 @@ const loadLinks = async () => {
 const saveLinks = async (links) => {
   await writeFile(DATA_FILE, JSON.stringify(links));
 }
+
+app.get("/",(req,res) => {
+  try{
+}catch{
+  }
+});
+
+
 
 const server = createServer(async ( req,res) => {
    console.log(req.url);
