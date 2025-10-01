@@ -9,6 +9,9 @@ const PORT = 3002;
 app.use(express.static("public"));
 app.use(express.urlencoded({extened:true}))
 
+app.set ("view engine","ejs");
+
+
 app.use(shortenedRoutes);
 
 // const serverFile = async (res,filePath,contentType) => {
