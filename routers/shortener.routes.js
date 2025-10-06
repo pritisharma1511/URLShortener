@@ -29,6 +29,9 @@ import {json} from "stream/consumers";
 // }
 
 router.get("/",getShortenerPage);
+// router.get("/",(req,res)=>{
+// res.send("hiiii")
+// });
 
 router.get("/:shortCode",getURLShortener);
 
